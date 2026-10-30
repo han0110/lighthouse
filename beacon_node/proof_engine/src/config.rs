@@ -5,12 +5,12 @@ use serde::{Deserialize, Deserializer, Serialize, de::Error as _};
 use std::{collections::HashSet, str::FromStr};
 use types::execution::ProofType;
 
-// Program verification keys registered by eth-act/ere-guests v0.17.0 for use with the ERE
-// v0.17.2 verifier pinned by build/ere_verifier.rs. The client and release versions below
+// Program verification keys registered by eth-act/ere-guests v0.19.0 for use with the ERE
+// v0.19.6 verifier pinned by build/ere_verifier.rs. The client and release versions below
 // identify the guest binaries that produced the keys.
-// Ethrex stateless-validator guests from ethrex v26.0.0.
+// Ethrex stateless-validator guests from ethrex v30.0.1.
 const DEFAULT_ETHREX_OPENVM_PROGRAM_VK: &str = concat!(
-    "005793a02300aef9526800ee5a881400a80e7d2600ba7f8b4500f002973500b2c72d61005e74577006030619068000a2",
+    "008d36200a00e90c730a00b9900134009fb25e6f00836162350054ddfd0700ee924c30008108af2a06030619068000a2",
     "c21b53000a2fee4f0036169c2800aaaa8d6c0087fbce5b00328dc26f009fe7de5a004686562400e77e894500a128f20f",
     "00674f7c2400b38df01800309c530900a487cf0400725bac510051af497500e4abff6e00a58ac939000775b41a001a76",
     "e84100c5e8944400c94e8e1600330e6b39001cacbc5a00ca47cd51001b418e02000fe02a480009a32070002554164500",
@@ -20,13 +20,13 @@ const DEFAULT_ETHREX_OPENVM_PROGRAM_VK: &str = concat!(
     "003de28a5f008584cc2a00033ab1020025f59e4a00c3a9f64a00b8ef166500",
 );
 const DEFAULT_ETHREX_SP1_PROGRAM_VK: &str =
-    "00662ca6c9db4ecb22d9ac4c320612caeac9c320f92e3ab019af4f544e35c88b";
+    "00507acac63813288e5be07a21ab6b8d0fbb0393e290b584a2d19bc1e7f4c540";
 const DEFAULT_ETHREX_ZISK_PROGRAM_VK: &str =
-    "be8b29b013077f82a411403e9389ae7464b152db764e4333fdbd2c81fa157b0d";
+    "9a9d2e610bbe0d5e9d030a0c558e92446ddf7df5c6378b5bd040353241316076";
 
-// Reth stateless-validator guests from reth v0.1.0-rc.3.
+// Reth stateless-validator guests from reth v0.1.0-rc.6.
 const DEFAULT_RETH_OPENVM_PROGRAM_VK: &str = concat!(
-    "0025e8d0440012375702004a22c350005a7cef2700f3654950004ba3266800e754e517007b9ca23d06030619068000a2",
+    "00d9e27d020052f71b26001262c4620034ceb12a0056b3015900d7e27b5900b329b52300e3bdc24c06030619068000a2",
     "c21b53000a2fee4f0036169c2800aaaa8d6c0087fbce5b00328dc26f009fe7de5a004686562400e77e894500a128f20f",
     "00674f7c2400b38df01800309c530900a487cf0400725bac510051af497500e4abff6e00a58ac939000775b41a001a76",
     "e84100c5e8944400c94e8e1600330e6b39001cacbc5a00ca47cd51001b418e02000fe02a480009a32070002554164500",
@@ -36,13 +36,25 @@ const DEFAULT_RETH_OPENVM_PROGRAM_VK: &str = concat!(
     "003de28a5f008584cc2a00033ab1020025f59e4a00c3a9f64a00b8ef166500",
 );
 const DEFAULT_RETH_SP1_PROGRAM_VK: &str =
-    "00a03cbfa95559cfee3b45ef925f3f7a631181e35e774e92b040277d893511dd";
+    "00cfd2116a638ef1ddf49203a19967fbe2dfc1a0158f1771fad2fc568d5e24fb";
 const DEFAULT_RETH_ZISK_PROGRAM_VK: &str =
-    "7b0f7b082966c8155b496c2e1a371b3824b461ad2e1c2931f222c63a10004a14";
+    "783097a373742236094ead8b832a2cf1e80ec60e7f3b3538b2f6612f9fabc837";
 
-// Zesu stateless-validator guest from zesu-zkvm tests-glamsterdam-devnet@v8.1.4.
-const DEFAULT_ZESU_ZISK_PROGRAM_VK: &str =
-    "0e85a61f8d928667d8a771506348809f054360b27b97595eeaba611fa5760ba7";
+// Nimbus stateless-validator guests from nimbus-zkvm-guests v0.3.1-alpha.
+const DEFAULT_NIMBUS_SP1_PROGRAM_VK: &str =
+    "007688ef646ad5d5c57904bdc6dc64be64d1ee0a2a3b30d7c375a2975e702609";
+const DEFAULT_NIMBUS_ZISK_PROGRAM_VK: &str =
+    "27a16d493e4fd453ee6eeb9c993912713ded47f6d8b4b02f6946e5796a4bf00e";
+
+// Nethermind stateless-validator guests from nethermind zkvm-guests-2.3.0-preview+3.
+const DEFAULT_NETHERMIND_SP1_PROGRAM_VK: &str =
+    "004d9d64976fd3a15057a28245b83229a4cbe0ac6f98923ab935a6a0df09f84b";
+const DEFAULT_NETHERMIND_ZISK_PROGRAM_VK: &str =
+    "88b9f812a85d8a110877221fb1b4c24500cfd34339b0b258a0c09373e136a61f";
+
+// Zilkworm stateless-validator guest from zilkworm v0.1.0-alpha.7.
+const DEFAULT_ZILKWORM_SP1_PROGRAM_VK: &str =
+    "004ae5f2938262b0c67f4592246c29be501aac3a305672224f4f058c55d7f51b";
 
 /// Configuration for the in-process EIP-8025 proof engine.
 #[derive(Debug, Clone, Serialize)]
@@ -156,15 +168,17 @@ impl ProofEngineConfig {
 
 impl Default for ProofEngineConfig {
     /// Built-in verifier configuration for every guest registered by `eth-act/ere-guests` at tag
-    /// `v0.17.0`, for use with the ERE v0.17.2 verifier pinned by `build/ere_verifier.rs`.
+    /// `v0.19.0`, for use with the ERE v0.19.6 verifier pinned by `build/ere_verifier.rs`.
     /// The proof-type assignments are provisional while EIP-8025 is under development.
     fn default() -> Self {
         Self::new(
             ProofType::all()
                 .iter()
-                .map(|proof_type| ExecutionProofConfig {
-                    proof_type: *proof_type,
-                    program_vk: default_program_vk(*proof_type),
+                .filter_map(|proof_type| {
+                    default_program_vk(*proof_type).map(|program_vk| ExecutionProofConfig {
+                        proof_type: *proof_type,
+                        program_vk,
+                    })
                 })
                 .collect(),
         )
@@ -172,10 +186,11 @@ impl Default for ProofEngineConfig {
     }
 }
 
-/// The embedded program verification key for `proof_type`.
+/// The embedded program verification key for `proof_type`, or `None` when the pinned
+/// `eth-act/ere-guests` release registers no guest for it.
 ///
-/// Exhaustive by construction, so a newly assigned proof type cannot be added without one.
-fn default_program_vk(proof_type: ProofType) -> Vec<u8> {
+/// Exhaustive by construction, so a newly assigned proof type cannot be added without a decision.
+fn default_program_vk(proof_type: ProofType) -> Option<Vec<u8>> {
     let encoded = match proof_type {
         ProofType::EthrexOpenVM => DEFAULT_ETHREX_OPENVM_PROGRAM_VK,
         ProofType::EthrexSP1 => DEFAULT_ETHREX_SP1_PROGRAM_VK,
@@ -183,9 +198,14 @@ fn default_program_vk(proof_type: ProofType) -> Vec<u8> {
         ProofType::RethOpenVM => DEFAULT_RETH_OPENVM_PROGRAM_VK,
         ProofType::RethSP1 => DEFAULT_RETH_SP1_PROGRAM_VK,
         ProofType::RethZisk => DEFAULT_RETH_ZISK_PROGRAM_VK,
-        ProofType::ZesuZisk => DEFAULT_ZESU_ZISK_PROGRAM_VK,
+        ProofType::ZesuZisk => return None,
+        ProofType::NimbusSP1 => DEFAULT_NIMBUS_SP1_PROGRAM_VK,
+        ProofType::NimbusZisk => DEFAULT_NIMBUS_ZISK_PROGRAM_VK,
+        ProofType::NethermindSP1 => DEFAULT_NETHERMIND_SP1_PROGRAM_VK,
+        ProofType::NethermindZisk => DEFAULT_NETHERMIND_ZISK_PROGRAM_VK,
+        ProofType::ZilkwormSP1 => DEFAULT_ZILKWORM_SP1_PROGRAM_VK,
     };
-    hex::decode(encoded).expect("embedded program verification key is valid hex")
+    Some(hex::decode(encoded).expect("embedded program verification key is valid hex"))
 }
 
 impl<'de> Deserialize<'de> for ProofEngineConfig {
@@ -286,7 +306,7 @@ mod tests {
         for json in [
             // Unassigned proof types are rejected by the codec.
             r#"{"execution_proofs":[{"proof_type":0,"program_vk":"0x00"}]}"#,
-            r#"{"execution_proofs":[{"proof_type":8,"program_vk":"0x00"}]}"#,
+            r#"{"execution_proofs":[{"proof_type":13,"program_vk":"0x00"}]}"#,
             r#"{"execution_proofs":[{"proof_type":5,"program_vk":"00"}]}"#,
             r#"{"execution_proofs":[{"proof_type":5,"program_vk":"0x0g"}]}"#,
             r#"{"execution_proofs":[{"proof_type":5,"program_vk":"0x"}]}"#,
@@ -315,7 +335,7 @@ mod tests {
     }
 
     #[test]
-    fn default_config_matches_all_ere_guests_v0_17_0_program_keys() {
+    fn default_config_matches_all_ere_guests_v0_19_0_program_keys() {
         let config = ProofEngineConfig::default();
         let expected = [
             (
@@ -349,9 +369,29 @@ mod tests {
                 DEFAULT_RETH_ZISK_PROGRAM_VK,
             ),
             (
-                ProofType::ZesuZisk,
+                ProofType::NimbusSP1,
+                ZkvmKind::Sp1,
+                DEFAULT_NIMBUS_SP1_PROGRAM_VK,
+            ),
+            (
+                ProofType::NimbusZisk,
                 ZkvmKind::Zisk,
-                DEFAULT_ZESU_ZISK_PROGRAM_VK,
+                DEFAULT_NIMBUS_ZISK_PROGRAM_VK,
+            ),
+            (
+                ProofType::NethermindSP1,
+                ZkvmKind::Sp1,
+                DEFAULT_NETHERMIND_SP1_PROGRAM_VK,
+            ),
+            (
+                ProofType::NethermindZisk,
+                ZkvmKind::Zisk,
+                DEFAULT_NETHERMIND_ZISK_PROGRAM_VK,
+            ),
+            (
+                ProofType::ZilkwormSP1,
+                ZkvmKind::Sp1,
+                DEFAULT_ZILKWORM_SP1_PROGRAM_VK,
             ),
         ];
 
@@ -368,16 +408,18 @@ mod tests {
     }
 
     #[test]
-    fn default_config_covers_every_assigned_proof_type() {
+    fn default_config_covers_every_assigned_proof_type_with_a_guest() {
         let config = ProofEngineConfig::default();
 
         for proof_type in ProofType::all() {
-            assert!(
+            // eth-act/ere-guests v0.19.0 registers no Zesu guest.
+            assert_eq!(
                 config
                     .execution_proofs()
                     .iter()
                     .any(|config| config.proof_type == *proof_type),
-                "no verifier configured for {proof_type:?}"
+                *proof_type != ProofType::ZesuZisk,
+                "unexpected verifier configuration for {proof_type:?}"
             );
         }
     }

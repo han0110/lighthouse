@@ -331,10 +331,10 @@ Options:
           1/3 of a slot.
       --proof-engine [<PATH>]
           Enable the experimental in-process EIP-8025 proof engine. If PATH is
-          omitted, use the built-in reth verifier configuration for OpenVM, SP1,
-          and Zisk. Otherwise, PATH must contain a JSON ProofEngineConfig.
-          Supplying this flag without --execution-endpoint runs a proof-only
-          node that has no execution layer.
+          omitted, use the built-in verifier configuration for the
+          eth-act/ere-guests guests. Otherwise, PATH must contain a JSON
+          ProofEngineConfig. Supplying this flag without --execution-endpoint
+          runs a proof-only node that has no execution layer.
       --proposer-reorg-cutoff <MILLISECONDS>
           DEPRECATED. This flag has no effect.
       --proposer-reorg-disallowed-offsets <N1,N2,...>

@@ -1,11 +1,11 @@
 //! End-to-end verification of known-valid execution proofs.
 //!
-//! The fixtures are Ethrex v26.0.0 and reth v0.1.0-rc.3 guest artifacts copied from
-//! `eth-act/zkboost` at commit `7f99d70a679bd0c0e8951f9d2797183340f80262`. Their program
-//! verification keys are registered by `eth-act/ere-guests` v0.17.0 and verified here with ERE
-//! v0.17.2, the verifier release pinned by this crate. zkBoost does not publish a Zesu proof
-//! fixture at that commit, so Zesu is covered by configuration tests but not by this known-valid
-//! proof suite.
+//! The fixtures are proofs of the ethrex v30.0.1, reth v0.1.0-rc.6, nimbus-zkvm-guests
+//! v0.3.1-alpha, nethermind zkvm-guests-2.3.0-preview+3, and zilkworm v0.1.0-alpha.7 guests,
+//! copied from `eth-act/zkboost` v0.19.0 at commit `95e2f03a8359ab52e82cc4d39ba3ce03018273fe`.
+//! Their program verification keys are registered by `eth-act/ere-guests` v0.19.0 and verified
+//! here with ERE v0.19.6, the verifier release pinned by this crate. `eth-act/ere-guests` v0.19.0
+//! registers no Zesu guest, so Zesu has neither a built-in verifier nor a proof fixture.
 #![cfg(feature = "ere-verifier")]
 
 use proof_engine::ere::EreProofEngine;
@@ -16,18 +16,18 @@ use types::Hash256;
 use types::execution::{ExecutionProof, ProofData, ProofType, PublicInput};
 
 /// The proof fixture for each proof type, alongside the guest that produced it.
-const PROOFS: [(ProofType, &str); 6] = [
+const PROOFS: [(ProofType, &str); 11] = [
     (
         ProofType::EthrexOpenVM,
         "stateless-validator-ethrex-openvm-v2.1.0-preview.proof",
     ),
     (
         ProofType::EthrexSP1,
-        "stateless-validator-ethrex-sp1-v6.4.0.proof",
+        "stateless-validator-ethrex-sp1-v6.9.0.proof",
     ),
     (
         ProofType::EthrexZisk,
-        "stateless-validator-ethrex-zisk-v1.1.0-alpha.proof",
+        "stateless-validator-ethrex-zisk-v1.3.2-alpha.proof",
     ),
     (
         ProofType::RethOpenVM,
@@ -35,11 +35,31 @@ const PROOFS: [(ProofType, &str); 6] = [
     ),
     (
         ProofType::RethSP1,
-        "stateless-validator-reth-sp1-v6.4.0.proof",
+        "stateless-validator-reth-sp1-v6.9.0.proof",
     ),
     (
         ProofType::RethZisk,
-        "stateless-validator-reth-zisk-v1.1.0-alpha.proof",
+        "stateless-validator-reth-zisk-v1.3.2-alpha.proof",
+    ),
+    (
+        ProofType::NimbusSP1,
+        "stateless-validator-nimbus-sp1-v6.9.0.proof",
+    ),
+    (
+        ProofType::NimbusZisk,
+        "stateless-validator-nimbus-zisk-v1.3.2-alpha.proof",
+    ),
+    (
+        ProofType::NethermindSP1,
+        "stateless-validator-nethermind-sp1-v6.9.0.proof",
+    ),
+    (
+        ProofType::NethermindZisk,
+        "stateless-validator-nethermind-zisk-v1.3.2-alpha.proof",
+    ),
+    (
+        ProofType::ZilkwormSP1,
+        "stateless-validator-zilkworm-sp1-v6.9.0.proof",
     ),
 ];
 
@@ -168,7 +188,7 @@ fn known_valid_proofs_reject_a_foreign_proof_type() {
 #[test]
 fn corrupted_sp1_nested_lengths_are_rejected() {
     let engine = EreProofEngine::new(ProofEngineConfig::default()).expect("engine initializes");
-    let valid = fixture("stateless-validator-reth-sp1-v6.4.0.proof");
+    let valid = fixture("stateless-validator-reth-sp1-v6.9.0.proof");
 
     // Offsets inside the decoded structure, past the outer enum selector, set to lengths far
     // larger than the input. A bounded decoder answers `Invalid`; an unbounded one aborts.
